@@ -1,0 +1,8 @@
+php_flag display_errors on
+#ewriteEngine On
+#ewriteCond %{REQUEST{FILENAME} -s [OR]
+#ewriteCond %{REQUEST{FILENAME} -l [OR]
+#ewriteCond %{REQUEST_FILENAME} !-d
+#ewriteCond %{REQUEST_FILENAME} !-f 
+#ewriteRule ^.*$ - [NC,L]
+#ewriteRule ^.*$ index.php [NC,L]

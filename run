@@ -1,0 +1,11 @@
+#!/usr/bin/php
+<?php
+//system("killall /usr/bin/php");
+require "config.php";
+
+for($i=1;$i<=Config::$queue_number; $i++) {
+	echo "Starting server $i\n";
+	system("bin/server $i > /dev/null 2>&1 &");
+}
+
+?>

@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<HTML><HEAD>
+  <META HTTP-EQUIVE="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+  <META HTTP-EQUIV="Charset" CONTENT="iso-8859-2">
+  <TITLE>mozgrab.pl: a web page screen shot grabber using Mozilla</TITLE>
+</HEAD><BODY BGCOLOR="#ffffff">
+
+<H1>mozgrab.pl: a web page screen shot grabber using Mozilla</H1>
+
+<P>mozgrab.pl is a UNIX command-line utility that can be used to make automated
+screen shots of web pages, without web browser menus or other decorations.
+The screen shot can be up to 30 pages (32000 pixels) high. It invokes Mozilla
+to download and show a web page, and then mozgrab.pl makes screen shots and
+concatenates them vertically to form a PPM file.
+
+<P>The newest version of this web page is available from
+<A HREF="http://www.math.bme.hu/~pts/mozgrab.html">http://www.math.bme.hu/~pts/mozgrab.html</A>
+
+<P>Developing mozgrab.pl was the homework assignment
+of the author
+for the ATHENS ENSAM3 course in November 2004.
+The e-mail address of the author is
+<A HREF="mailto:pts+mozgrab@math.bme.h">Szabó Péter</A> (
+the last character (u) of
+the e-mail address was removed from the link -- this prevents spam bots from
+recognising the address).
+
+<H2>Requirements</H2>
+
+<H3>System</H3>
+
+<UL>
+<LI>a UNIX system, preferably Linux
+<LI>a Bourne-compatible shell
+<LI>Perl 5
+<LI>a running X11 session (Xvnc and Xnest are also OK)
+<LI>Mozilla, Firefox or Galeon on <CODE>$PATH</CODE> of the <I>local</I> system
+<LI>the netpbm utilities
+<LI>X11 include files
+<LI>GCC
+</UL>
+
+<H3>Commands required</H3>
+
+<UL>
+<LI><CODE>perl</CODE>
+<LI><CODE>sh</CODE>
+<LI><CODE>ldd</CODE>
+<LI><CODE>mozilla</CODE>, <CODE>firefox</CODE> or <CODE>galeon</CODE>
+<LI><CODE>gcc</CODE>
+<LI><CODE>ps</CODE>
+<LI><CODE>xwd</CODE>
+<LI><CODE>xwdtopnm</CODE>
+<LI><CODE>pnmdepth</CODE>
+</UL>
+
+<H3>Test system</H3>
+
+The author of mozgrab.pl used this system in December 2004 for developing and
+testing mozgrab.pl:
+
+<UL>
+<LI>Debian GNU/Linux Woody
+<LI>GLibc 2.2.5
+<LI>Bash
+<LI>Perl 5.6.1
+<LI>XFree86 Version 4.1.0.1, protocol Version 11, revision 0, vendor release 6510
+<LI>Mozilla 1.6-6 Gecko/20040530
+<LI>netpbm 2:9.20-8
+<LI>gcc version 2.95.4 20011002 (Debian prerelease)
+</UL>
+
+<H2>Usage</H2>
+
+<OL>
+<LI><A HREF="mozgrab.zip">Download</A> and extract mozgrab.pl
+<LI>Ensure that the file mozgrab.pl is executable.
+<LI>Ensure that all the requirements are met.
+<LI>Start an X11 session.
+<LI>Start an XTerm or other terminal emulator.
+<LI>Change to the directory containing mozgrab.pl
+<LI>Try grabbing, for example issue the command
+    <CODE>./mozgrab.pl --url=http://www.linux.org/ --outfile=lorg.ppm</CODE>
+<LI>View the created file <CODE>lorg.ppm</CODE> in your favourite image
+    viewer, for example <CODE>xv lorg.ppm</CODE>,
+    <CODE>display lorg.ppm</CODE>,
+    <CODE>eeyes lorg.ppm</CODE>,
+    <CODE>gimp lorg.ppm</CODE>,
+    <CODE>xzgv lorg.ppm</CODE>.
+<LI>Convert <CODE>lorg.ppm</CODE> to some other image file format, for
+    example <CODE>convert lorg.ppm lorg.jpg</CODE>
+<LI>Run <CODE>./mozgrab.pl</CODE> to get to know more options.
+</OL>
+
+<H2>Features</H2>
+
+<UL>
+<LI>can start up Mozilla automatically
+<LI>does not grab window manager and browser decorations
+<LI>can make the grab taller than a single screen
+</UL>
+
+<H2>Limitations</H2>
+
+<UL>
+<LI>web pages taller than 32000 pixels will be cropped (this is an
+    inherent X11 limitation)
+<LI>the amount of time spent waiting for Mozilla to render the pages are
+    hard-coded
+<LI>a running X11 session is required
+<LI>two instances of mozgrab.pl cannot run concurrently
+<LI>a local copy of Mozilla is required
+<LI>Mozilla sometimes fails to render the page (especially the letters) --
+    mozgrab.pl has to be run again.
+</UL>
+
+</BODY>

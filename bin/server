@@ -1,0 +1,115 @@
+#!/usr/bin/php
+<?php
+
+if(!isset($argv[1]) || !is_numeric($argv[1]) || count($argv) > 2) {
+	trigger_error($argv[0] . " expects one parameter, the server number", E_USER_ERROR);
+	exit();
+}
+
+$nr = intval($argv[1]);
+
+ini_set('display_errors', true);
+
+require dirname(__FILE__) . '/../config.php';
+require dirname(__FILE__) . '/../lib/util.php';
+require dirname(__FILE__) . '/../lib/log.php';
+
+$resolution = "640 480";
+
+// read from stdin
+$handle = Util::open_pipe($nr);
+
+if(!$handle) {
+	trigger_error("Failed to open pipe number $nr", E_USER_ERROR);
+	exit();
+}
+
+Log::info("Server $nr started.");
+
+$in_process = array();
+
+$running = 0;
+
+$slowDown = 2; // slowdown time of true loop, to reduce cpu usage
+
+$queueTimeLimit = 2; // wait limit before processing is being done
+$queueLength = 5; // queue size before process is being done 
+
+while(true) {
+
+	$urls = Array();
+	$timer_start = time();
+
+	$continue = false;
+	//while(($url = stream_get_line($handle,65535,"\n")) || $continue) { 
+	while(($url = stream_get_line($handle,65535,"\n"))) { 
+
+		//if($url) { $urls[] = $url; }
+		//$urls[] = $url;
+
+		Log::info(sprintf("server %d: has %d urls in queue", $nr, count($urls)));
+/*
+		if( count($urls) <= $queueLength && ($timer_start + $queueTimeLimit) > time()) {
+			// wait some to let the queue fill
+			Log::info("Wait some to let the queue fill for server $nr, " . (($timer_start + $queueTimeLimit) - time()) ."s");
+			$url = false;
+			$continue = true;
+			sleep(1);
+			continue 2;
+		} else {
+			$continue = false;
+
+
+			foreach($urls as $url) {
+*/
+
+				$url = str_replace("\n", '', $url);
+
+				Log::info("server $nr: process $url");
+
+				$qid = Util::generateQid($url);
+
+				$outfile = Config::$outputDir . "/$qid.png";
+
+				if(file_exists($outfile)) {
+					Log::info("server $nr: allready cached file $qid.png");
+				} else {
+					Log::info("server $nr: creating $qid.png");
+					/*
+					   if(in_array($in_process, $qid)) {
+					   Log::info("server $nr: $qid allready being processed");
+					   continue;
+					   }
+					 */
+
+					$in_process[$qid] = $qid;
+
+					$url = escapeshellarg($url); // add quotes etc.
+
+					$ua = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; nl; rv:1.9.0.10) Gecko/2009042315 Firefox/3.0.10";
+					$cmd = "xvfb-run --server-args=\"-screen 0, 1024x768x24\" CutyCapt --user-agent=\"$ua\" --url=$url --out=$outfile --plugins=on";
+					//$cmd = "xvfb-run --server-args=\"-screen 0, 1024x768x24\" websnap $url $outfile $resolution";	
+					Log::info("$cmd");
+					system($cmd);
+
+					Log::info("server $nr: finished");
+					$running++;
+
+
+				}
+/*
+			}
+
+			$urls = array(); // reset urls
+			$timer_start = time(); // reset timer
+
+		}
+*/
+	}
+	// some time to breath
+	sleep($slowDown);
+}
+
+fclose($handle);
+
+?>
